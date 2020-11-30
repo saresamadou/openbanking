@@ -1,45 +1,35 @@
 package io.betterbanking.service;
 
+import io.betterbanking.api.impl.RestTransactionApiClient;
 import io.betterbanking.domain.Transaction;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * @author sareaboudousamadou.
  */
 @Service
+@Slf4j
 public class TransactionService {
 
+    private RestTransactionApiClient restTransactionApiClient;
 
-    public List<Transaction> findAllByAccountNumber() {
-        return getDummyTransactions();
+    public TransactionService(RestTransactionApiClient restTransactionApiClient) {
+        this.restTransactionApiClient = restTransactionApiClient;
     }
 
-    private List<Transaction> getDummyTransactions() {
-        Transaction firstTransaction = Transaction.builder()
-                .type("TRANSACTION1")
-                .accountNumber(1234)
-                .amount(BigDecimal.valueOf(5353, 87))
-                .merchantName("Merchant1")
-                .currency("EUR")
-                .build();
-        Transaction secondTransaction = Transaction.builder()
-                .type("TRANSACTION2")
-                .accountNumber(2234)
-                .amount(BigDecimal.valueOf(2353, 27))
-                .merchantName("Merchant2")
-                .currency("EUR")
-                .build();
-        Transaction thirdTransaction = Transaction.builder()
-                .type("TRANSACTION3")
-                .accountNumber(3234)
-                .amount(BigDecimal.valueOf(3353, 37))
-                .merchantName("Merchant3")
-                .currency("EUR")
-                .build();
-        return List.of(firstTransaction, secondTransaction, thirdTransaction);
+    @CircuitBreaker(name = "RestTransactionApiClient", fallbackMethod = "fallback")
+    public List<Transaction> findAllByAccountNumber(long accountNumber) {
+        log.info("Finding all transaction for account number" + accountNumber);
+        return restTransactionApiClient.getTransactionByAccountNumber(accountNumber);
+    }
+
+    private List<Transaction> fallback(HttpServerErrorException ex) {
+        return List.of();
     }
 
 }

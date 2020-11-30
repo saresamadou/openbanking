@@ -27,12 +27,15 @@ dependencies {
 	compile group: 'io.gsonfire', name: 'gson-fire', version: '1.8.5'
 	compile group: 'javax.validation', name: 'validation-api'
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
+	compile group: 'io.github.resilience4j', name: 'resilience4j-spring-boot2', version: '1.6.1'
+	compile('org.springframework.boot:spring-boot-starter-aop')
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
-
+	testImplementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.0.1'
+	testImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.0.1'
 	testCompile group: 'io.rest-assured', name: 'spring-mock-mvc', version: '3.0.0'
 }
 

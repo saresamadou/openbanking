@@ -1,16 +1,17 @@
 package io.betterbanking.web;
 
+import io.betterbanking.api.impl.RestTransactionApiClient;
 import io.betterbanking.domain.Transaction;
 import io.betterbanking.service.TransactionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -28,6 +29,9 @@ public class TransactionControllerIntegrationTest {
     @MockBean
     private TransactionService transactionService;
 
+    @Mock
+    private RestTransactionApiClient restTransactionApiClient;
+
     @Test
     @DisplayName("/transactions endpoint should return list of transactions for a given accountNumber")
     void getAllTransactions200Test() throws Exception {
@@ -35,26 +39,26 @@ public class TransactionControllerIntegrationTest {
         Transaction firstTransaction = Transaction.builder()
                 .type("TRANSACTION1")
                 .accountNumber(1234)
-                .amount(BigDecimal.valueOf(5353, 87))
+                .amount("5353, 87")
                 .merchantName("Merchant1")
                 .currency("EUR")
                 .build();
         Transaction secondTransaction = Transaction.builder()
                 .type("TRANSACTION2")
-                .accountNumber(2234)
-                .amount(BigDecimal.valueOf(2353, 27))
+                .accountNumber(1234)
+                .amount("2353, 27")
                 .merchantName("Merchant2")
                 .currency("EUR")
                 .build();
         Transaction thirdTransaction = Transaction.builder()
                 .type("TRANSACTION3")
-                .accountNumber(3234)
-                .amount(BigDecimal.valueOf(3353, 37))
+                .accountNumber(1234)
+                .amount("3353, 37")
                 .merchantName("Merchant3")
                 .currency("EUR")
                 .build();
 
-        when(transactionService.findAllByAccountNumber()).thenReturn(List.of(firstTransaction, secondTransaction, thirdTransaction));
+        when(transactionService.findAllByAccountNumber(1234)).thenReturn(List.of(firstTransaction, secondTransaction, thirdTransaction));
 
         // Then
         mockMvc.perform(get("/transactions/50"))

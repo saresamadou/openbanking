@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 public class TransactionController {
 
-
     private TransactionService transactionService;
 
     public TransactionController(TransactionService transactionService) {
@@ -27,7 +26,7 @@ public class TransactionController {
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE}, path = "/transactions/{accountNumber}")
     public ResponseEntity<List<Transaction>> getAllTransactions(@PathVariable("accountNumber") Integer accountNumber) {
-        List<Transaction> transactions = transactionService.findAllByAccountNumber();
+        List<Transaction> transactions = transactionService.findAllByAccountNumber(accountNumber);
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 }
